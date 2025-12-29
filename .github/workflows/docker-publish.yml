@@ -1,0 +1,60 @@
+name: Build and Push Docker Multi-Arch
+
+on:
+  push:
+    branches:
+      - main-disabled
+
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_AUTHORS: "Nemanja Mitic <me@nemanjamitic.com>"
+      BUILD_SHA512SUM: "a13f45cc465100726d324a59f1683c5a116d4aad8ae3d26d3b6d709d8d97b6db14a135c08a0064d3194ed363891efa6cdcb0f4b58111d78a718fa2f6bd936bd7"
+      BUILD_VERSION: "1839"
+      IMAGE_NAME: "nemanjamitic/mybb"
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Set up QEMU for multi-arch builds
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step to set current UTC date
+      - name: Set build date
+        id: builddate
+        run: echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+
+      # Build and push multi-arch image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./docker
+          file: ./docker/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.BUILD_VERSION }}
+            ${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            BUILD_AUTHORS=${{ env.BUILD_AUTHORS }}
+            BUILD_DATE=${{ env.BUILD_DATE }}
+            BUILD_SHA512SUM=${{ env.BUILD_SHA512SUM }}
+            BUILD_VERSION=${{ env.BUILD_VERSION }}

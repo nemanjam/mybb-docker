@@ -12,10 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      IMAGE_NAME: "nemanjamitic/mybb"
       BUILD_AUTHORS: "Nemanja Mitic <me@nemanjamitic.com>"
       BUILD_SHA512SUM: "a13f45cc465100726d324a59f1683c5a116d4aad8ae3d26d3b6d709d8d97b6db14a135c08a0064d3194ed363891efa6cdcb0f4b58111d78a718fa2f6bd936bd7"
-      BUILD_VERSION: "1839"
-      IMAGE_NAME: "nemanjamitic/mybb"
+      BUILD_VERSION: "1839"           # numeric version used in build args
+      BUILD_VERSION_DOTTED: "1.8.39"  # dotted version for tags
 
     steps:
       # Checkout code
@@ -51,7 +52,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.BUILD_VERSION }}
+            ${{ env.IMAGE_NAME }}:${{ env.BUILD_VERSION_DOTTED }}
             ${{ env.IMAGE_NAME }}:latest
           build-args: |
             BUILD_AUTHORS=${{ env.BUILD_AUTHORS }}

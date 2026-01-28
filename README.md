@@ -1,8 +1,8 @@
 # MyBB
 
-- URL: https://rpi.varalicar.rs
-- PHP info: https://rpi.varalicar.rs/info.php
-- Adminer: https://adminer.rpi.varalicar.rs
+- URL: https://my-forum.com
+- PHP info: https://my-forum.com/info.php
+- Adminer: https://adminer.my-forum.com
 
 ## References
 
